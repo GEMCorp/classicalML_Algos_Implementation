@@ -33,13 +33,52 @@ Theta2_grad = zeros(size(Theta2));
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
-%
+
 % Part 1: Feedforward the neural network and return the cost in the
 %         variable J. After implementing Part 1, you can verify that your
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
 %
-% Part 2: Implement the backpropagation algorithm to compute the gradients
+
+X = [ones(m,1) X];
+a_1 = X;
+
+z_2 = a_1 * Theta1';
+a_2 = sigmoid(z_2);
+
+a_2 = [ones(m,1) a_2];
+z_3 = a_2 * Theta2';
+a_3 = sigmoid(z_3);
+
+h = a_3;
+c1 = 1/m;
+identity_matrix = eye(num_labels);
+y_matrix = identity_matrix(y,:);
+posClass = -(log(h) .* y_matrix);
+negClass = log(1-h) .* (1-y_matrix);
+doubleSum = sum(sum(posClass - negClass));
+
+J = c1 * doubleSum;
+
+
+
+% Part 2: Implement regularization with the cost function and gradients.
+%
+%         Hint: You can implement this around the code for
+%               backpropagation. That is, you can compute the gradients for
+%               the regularization separately and then add them to Theta1_grad
+%               and Theta2_grad from Part 2.
+%
+
+
+c2 =  lambda/(2*m);
+thetaReg1 = Theta1(:,2:end);
+thetaReg2 = Theta2(:,2:end);
+Reg = c2 * (sum(sum(thetaReg1.^2)) + sum(sum(thetaReg2.^2)));
+J += Reg;
+
+
+% Part 3: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
 %         Theta2_grad, respectively. After implementing Part 2, you can check
@@ -54,33 +93,27 @@ Theta2_grad = zeros(size(Theta2));
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
-% Part 3: Implement regularization with the cost function and gradients.
-%
-%         Hint: You can implement this around the code for
-%               backpropagation. That is, you can compute the gradients for
-%               the regularization separately and then add them to Theta1_grad
-%               and Theta2_grad from Part 2.
-%
 
+d3 = a_3 - y_matrix;
+d2 = (d3 * thetaReg2) .* sigmoidGradient(z_2);
 
+delta_2 = d3' * a_2;
+delta_1 = d2' * a_1;
 
+Theta1_grad = c1 * delta_1;
+Theta2_grad = c1 * delta_2;
 
+%regularization of gradients
+gradReg1 = Theta1;
+gradReg1(:,1) = 0;
+gradReg1 = gradReg1 .* (lambda/m);
 
+gradReg2 = Theta2;
+gradReg2(:,1) = 0;
+gradReg2 = gradReg2 .* (lambda/m);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-% -------------------------------------------------------------
+Theta1_grad += gradReg1;
+Theta2_grad += gradReg2;
 
 % =========================================================================
 
