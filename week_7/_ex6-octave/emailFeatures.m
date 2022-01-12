@@ -48,8 +48,16 @@ x = zeros(n, 1);
 %
 %
 
-
-
+for j = 1:length(word_indices)
+  i = 1;
+  while i <= n
+    if word_indices(j) == i
+      idx = word_indices(j);
+      x(idx) = 1;
+    endif
+    i += 1;
+  endwhile
+endfor
 
 
 
@@ -58,4 +66,4 @@ x = zeros(n, 1);
 % =========================================================================
     
 
-end
+endfunction
