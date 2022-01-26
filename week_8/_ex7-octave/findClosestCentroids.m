@@ -21,10 +21,23 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+m = size(X, 1);
 
-
-
-
+for i = 1:m
+  #temp_array = zeros(1, K);
+  
+  #for j = 1:K
+  #  temp(1,j) = norm((X(i,:) - centroids(j,:))); #norm not working?
+  #temp(1,j) = sqrt(sum(power((X(i,:) - centroids(j,:)), 2)));
+  #endfor
+  
+  #[~, temp_idx] = min(temp_array);
+  #idx(i) = temp_idx; 
+  
+  tmp = X(i,:);
+  [~, idx(i)] = min(sum(((bsxfun(@minus, tmp, centroids)).^2),2));
+  
+end 
 
 
 % =============================================================
